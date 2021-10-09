@@ -11,8 +11,8 @@ const DUMMY_PLACES = [
     imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Sun_Down_%28250260941%29.jpeg',
     address: '110台北市信義區信義路五段7號',
     location: {
-      lat: 22.6203184,
-      lng: 120.332019
+      lat: 25.0338089,
+      lng: 121.5623674
     },
     creator: 'u1'
   },
@@ -23,8 +23,8 @@ const DUMMY_PLACES = [
     imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Sun_Down_%28250260941%29.jpeg',
     address: '110台北市信義區信義路五段7號',
     location: {
-      lat: 22.6203184,
-      lng: 120.332019
+      lat: 25.0338089,
+      lng: 121.5623674
     },
     creator: 'u2'
   }
