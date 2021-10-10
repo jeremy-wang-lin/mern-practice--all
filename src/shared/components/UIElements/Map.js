@@ -8,7 +8,7 @@ const Map = (props) => {
   // object destruction (JS standdard feature)
   const { center, zoom } = props;
 
-  // The passed function will be executed when center or zoom changed
+  // The passed function will be executed after the component is completed rendering and when center or zoom changed
   useEffect(() => {
     const map = new window.google.maps.Map(mapRef.current, {
       center: center,
