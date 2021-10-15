@@ -18,7 +18,7 @@ const DUMMY_PLACES = [
   },
   {
     id: 'p2',
-    title: 'Taipei 101',
+    title: 'P2 Taipei 101',
     description: 'One of the most famous landmarks in Taiwan',
     imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Sun_Down_%28250260941%29.jpeg',
     address: '110台北市信義區信義路五段7號',

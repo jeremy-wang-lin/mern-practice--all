@@ -8,6 +8,7 @@ import {
   VALIDATOR_MINLENGTH,
 } from "../../shared/util/validators";
 import { useForm } from "../../shared/hooks/form-hook";
+import Card from "../../shared/components/UIElements/Card";
 import "./PlaceForm.css";
 
 const DUMMY_PLACES = [
@@ -26,7 +27,7 @@ const DUMMY_PLACES = [
   },
   {
     id: "p2",
-    title: "Taipei 101",
+    title: "P2 Taipei 101",
     description: "One of the most famous landmarks in Taiwan",
     imageUrl:
       "https://upload.wikimedia.org/wikipedia/commons/7/7e/Sun_Down_%28250260941%29.jpeg",
@@ -59,22 +60,27 @@ const UpdatePlace = () => {
   );
 
   const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
-  console.log(`Found identified place: {identifiedPlace}`);
+  if (identifiedPlace) {
+    console.log(`Found identified place: ${identifiedPlace}`);
+  }
 
   useEffect(() => {
-    setFormData(
-      {
-        title: {
-          value: identifiedPlace.title,
-          isValid: true,
+    if (identifiedPlace) {
+      setFormData(
+        {
+          title: {
+            value: identifiedPlace.title,
+            isValid: true,
+          },
+          description: {
+            value: identifiedPlace.description,
+            isValid: true,
+          },
         },
-        description: {
-          value: identifiedPlace.description,
-          isValid: true,
-        },
-      },
-      true
-    );
+        true
+      );
+    }
+
     setIsLoading(false);
     console.log("loaded!");
   }, [identifiedPlace, setFormData]);
@@ -87,7 +93,9 @@ const UpdatePlace = () => {
   if (!identifiedPlace) {
     return (
       <div className="center">
-        <h2>Could not find place!</h2>
+        <Card>
+          <h2>Could not find place!</h2>
+        </Card>
       </div>
     );
   }
