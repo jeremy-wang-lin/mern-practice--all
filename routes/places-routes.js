@@ -46,6 +46,14 @@ router.get("/:pid", (req, res, next) => {
 
   console.log("GET Request in Places");
 
+  if (!place) {
+    const error = new Error("Cound not find a place for the provided id.");
+    error.code = 404;
+
+    // use throw error for synchronous call
+    throw error;
+  }
+
   res.json({ place }); // => { place } => { place: place }
 });
 
@@ -54,6 +62,14 @@ router.get("/user/:uid", (req, res, next) => {
   const userPlaces = DUMMY_PLACES.filter((p) => {
     return p.creator === userId;
   });
+
+  if (userPlaces.length === 0) {
+    const error = new Error("Cound not find any place for the provided user id.");
+    error.code = 404;
+
+    // use next for asynchronous call
+    return next(error);
+  }
 
   res.json({ userPlaces });
 });
