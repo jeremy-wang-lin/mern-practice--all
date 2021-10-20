@@ -48,7 +48,7 @@ const getPlaceById = (req, res, next) => {
 
   if (!place) {
     // use throw error for synchronous call
-    throw new HttpError("Cound not find a place for the provided id.", 404);
+    throw new HttpError("Could not find a place for the provided id.", 404);
   }
 
   res.json({ place }); // => { place } => { place: place }
@@ -67,7 +67,7 @@ const getPlaceByUserId = (req, res, next) => {
   if (userPlaces.length === 0) {
     // use next for asynchronous call
     return next(
-      new HttpError("Cound not find any place for the provided user id.", 404)
+      new HttpError("Could not find any place for the provided user id.", 404)
     );
   }
 
