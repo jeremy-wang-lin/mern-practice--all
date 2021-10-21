@@ -84,14 +84,26 @@ const createPlace = (req, res, next) => {
     description,
     location: coordinates,
     address,
-    creator
+    creator,
   };
 
   DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
 
-  res.status(201).json({place: createdPlace});
+  res.status(201).json({ place: createdPlace });
+};
+
+const updatePlace = (req, res, next) => {
+  const placeId = req.params.pid; // { pid: p1 }
+  const { title, description } = req.body;
+
+  const placeIndex = DUMMY_PLACES.findIndex(obj => obj.id === placeId);
+  DUMMY_PLACES[placeIndex].title = title;
+  DUMMY_PLACES[placeIndex].description = description;
+
+  res.status(200).json({ place: DUMMY_PLACES[placeIndex] });
 };
 
 exports.getPlaceById = getPlaceById;
 exports.getPlaceByUserId = getPlaceByUserId;
 exports.createPlace = createPlace;
+exports.updatePlace = updatePlace;
