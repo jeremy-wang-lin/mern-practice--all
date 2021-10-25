@@ -15,7 +15,10 @@ const createProduct = async (req, res, next) => {
     name: req.body.name,
     price: req.body.price,
   });
+  console.log(createdProduct.id);  // 6176fefc9901e8687df4d8ad  // id is generated before inserting into db
   const result = await createdProduct.save();
+  console.log(createdProduct._id); // new ObjectId("6176fefc9901e8687df4d8ad")  // An Object which stores the object ID
+  console.log(createdProduct.id);  // 6176fefc9901e8687df4d8ad  // Convert Object to String
 
   res.json({result});
 };
