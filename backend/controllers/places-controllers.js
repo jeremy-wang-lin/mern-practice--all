@@ -80,9 +80,11 @@ const getPlacesByUserId = (req, res, next) => {
 
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
-  if ( !errors.isEmpty() ) {
+  if (!errors.isEmpty()) {
     console.log(errors);
-    return next(new HttpError("Invalid inputs passed, please check your data", 422));
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
   }
 
   const { title, description, address, creator } = req.body;
@@ -100,7 +102,8 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Sun_Down_%28250260941%29.jpeg",
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/7/7e/Sun_Down_%28250260941%29.jpeg",
     creator,
   });
 
@@ -120,7 +123,7 @@ const createPlace = async (req, res, next) => {
 
 const updatePlace = (req, res, next) => {
   const errors = validationResult(req);
-  if ( !errors.isEmpty() ) {
+  if (!errors.isEmpty()) {
     console.log(errors);
     throw new HttpError("Invalid inputs passed, please check your data", 422);
   }
@@ -128,7 +131,7 @@ const updatePlace = (req, res, next) => {
   const placeId = req.params.pid; // { pid: p1 }
   const { title, description } = req.body;
 
-  const placeIndex = DUMMY_PLACES.findIndex(p => p.id === placeId);
+  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
   DUMMY_PLACES[placeIndex].title = title;
   DUMMY_PLACES[placeIndex].description = description;
 
@@ -137,11 +140,11 @@ const updatePlace = (req, res, next) => {
 
 const deletePlace = (req, res, next) => {
   const placeId = req.params.pid;
-  if ( !DUMMY_PLACES.find(p => p.id === placeId) ) {
+  if (!DUMMY_PLACES.find((p) => p.id === placeId)) {
     throw new HttpError("Could not find a place for that id.", 404);
   }
 
-  DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId);
+  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
 
   res.status(200).json({ message: "ok" });
 };
