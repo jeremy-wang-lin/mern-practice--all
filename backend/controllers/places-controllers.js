@@ -68,19 +68,30 @@ const getPlaceById = async (req, res, next) => {
     return next(httpError);
   }
 
-  res.json({ place }); // => { place } => { place: place }
+  res.json({ place: place.toObject({ getters: true }) }); // => { place } => { place: place }
 };
 
 // Other alternatives:
 // function getPlaceById() { ... }
 // const getPlaceById = function() { ... }
 
-const getPlacesByUserId = (req, res, next) => {
+const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
 
-  const userPlaces = DUMMY_PLACES.filter((p) => {
-    return p.creator === userId;
-  });
+  //const userPlaces = DUMMY_PLACES.filter((p) => {
+  //  return p.creator === userId;
+  //});
+
+  let userPlaces;
+  try {
+    userPlaces = await Place.find({ creator: userId });
+  } catch (error) {
+    const errMsg = `Error occurs while finding places by user ID (${userId}). Error: ${error}`;
+    console.log(errMsg);
+    const httpError = new HttpError(errMsg, 500);
+
+    return next(httpError);
+  }
 
   if (!userPlaces || userPlaces.length === 0) {
     // use next for asynchronous call
@@ -89,7 +100,9 @@ const getPlacesByUserId = (req, res, next) => {
     );
   }
 
-  res.json({ userPlaces });
+  res.json({
+    userPlaces: userPlaces.map((place) => place.toObject({ getters: true })),
+  });
 };
 
 const createPlace = async (req, res, next) => {
