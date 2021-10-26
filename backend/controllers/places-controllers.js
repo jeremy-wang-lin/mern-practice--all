@@ -169,6 +169,15 @@ const updatePlace = async (req, res, next) => {
     return next(httpError);
   }
 
+  if (!place) {
+    const httpError = new HttpError(
+      "Could not find a place for the provided id.",
+      404
+    );
+
+    return next(httpError);
+  }
+
   place.title = title;
   place.description = description;
 
