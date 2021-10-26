@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const User = require("../models/user");
 
 let DUMMY_USERS = [
   {
@@ -22,32 +23,54 @@ const getAllUsers = (req, res, next) => {
   res.json({ users: DUMMY_USERS });
 };
 
-const signUp = (req, res, next) => {
+const signUp = async (req, res, next) => {
   const errors = validationResult(req);
   if ( !errors.isEmpty() ) {
     console.log(errors);
-    throw new HttpError("Invalid inputs passed, please check your data", 422);
+    return next(new HttpError("Invalid inputs passed, please check your data", 422));
   }
 
-  const { name, email, password } = req.body;
+  const { name, email, password, places } = req.body;
 
-  const hasUser = DUMMY_USERS.find((u) => u.email === email);
-  if (hasUser) {
-    throw new HttpError("Could not create user, email already exists", 422);
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (error) {
+    const errMsg = `Signing up failed. Error: ${error}`;
+    console.log(errMsg);
+    const httpError = new HttpError(errMsg, 500);
+
+    return next(httpError);
   }
 
-  const createdUser = {
-    id: uuidv4(),
+  console.log(existingUser);
+  if (existingUser) {
+    const httpError = new HttpError("User exists already, please login instead.", 422) 
+
+    return next(httpError);
+  }
+
+  const createdUser = new User({
     name,
     email,
-    password
-  };
+    image: "https://upload.wikimedia.org/wikipedia/zh/c/c8/Snoopy%28The_Peanuts%29.jpg",
+    password, 
+    places
+  });
+  
+  try {
+    await createdUser.save();
+  }  catch (error) {
+    const errMsg = `Error occurs while saving user. Error: ${error}`;
+    console.log(errMsg);
+    const httpError = new HttpError(errMsg, 500);
 
-  DUMMY_USERS.push(createdUser);
+    return next(httpError);
+  }
 
   res.status(201).json({
     message: "success",
-    created_user: createdUser,
+    created_user: createdUser.toObject({ getters: true }),
   });
 };
 
