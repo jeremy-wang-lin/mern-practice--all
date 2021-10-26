@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
@@ -16,7 +17,7 @@ app.use("/api/users", usersRoutes); // => /api/users/..
 app.use((req, res, next) => {
   const httpError = new HttpError("Could not find this route", 404);
   throw httpError;
-})
+});
 
 // Error handling middleware function
 app.use((error, req, res, next) => {
@@ -27,4 +28,14 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(5000);
+const dbUrl =
+  "mongodb+srv://jeremy:czj44WxD8Sbkf5mM@cluster0.nqbnx.mongodb.net/places?retryWrites=true&w=majority";
+mongoose
+  .connect(dbUrl)
+  .then(() => {
+    console.log("Connected to DB. Start backend server.");
+    app.listen(5000);
+  })
+  .catch((error) => {
+    console.log("Connect DB FAILED! Error: " + error);
+  });
