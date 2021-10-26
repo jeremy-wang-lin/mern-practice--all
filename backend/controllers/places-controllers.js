@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const Place = require("../models/place");
 const getCoordsForAddress = require("../util/location");
 
 let DUMMY_PLACES = [
@@ -94,16 +95,25 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuidv4(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Sun_Down_%28250260941%29.jpeg",
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
+  try {
+    await createdPlace.save();
+  } catch (error) {
+    const errMsg = "Error occurs while saving place! Error: " + error;
+    console.log(errMsg);
+    const httpError = new HttpError(errMsg, 500);
+
+    return next(httpError);
+  }
+  //DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
 
   res.status(201).json({ place: createdPlace });
 };
