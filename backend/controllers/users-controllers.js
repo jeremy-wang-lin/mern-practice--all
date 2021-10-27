@@ -74,17 +74,27 @@ const signUp = async (req, res, next) => {
   });
 };
 
-const login = (req, res, next) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  const loggedInUser = DUMMY_USERS.find(
-    (u) => u.email === email && u.password === password
-  );
-  if (!loggedInUser) {
-    throw new HttpError(
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (error) {
+    const errMsg = `Logging n failed. Error: ${error}`;
+    console.log(errMsg);
+    const httpError = new HttpError(errMsg, 500);
+
+    return next(httpError);
+  }
+
+  if (!existingUser || existingUser.password !== password) {
+    const httpError = new HttpError(
       "Unauthorized. It seems you enter wrong e-mail or password!",
       401
     );
+
+    return next(httpError);
   }
 
   res.json({ message: "Logged in" });
