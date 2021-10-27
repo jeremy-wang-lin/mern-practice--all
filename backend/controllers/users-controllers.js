@@ -19,8 +19,17 @@ let DUMMY_USERS = [
   },
 ];
 
-const getAllUsers = (req, res, next) => {
-  res.json({ users: DUMMY_USERS });
+const getAllUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, '-password');
+  } catch (error) {
+    const httpError = new HttpError("Fetching users failed.", 500);
+
+    return next(httpError);
+  }
+
+  res.json({user: users.map(user => user.toObject({ getters: true }))});
 };
 
 const signUp = async (req, res, next) => {
