@@ -84,9 +84,11 @@ const getPlacesByUserId = async (req, res, next) => {
   //  return p.creator === userId;
   //});
 
-  let userPlaces;
+  //let userPlaces;
+  let userWithPlaces;
   try {
-    userPlaces = await Place.find({ creator: userId });
+    //userPlaces = await Place.find({ creator: userId });
+    userWithPlaces = await User.findById(userId).populate("places");
   } catch (error) {
     const errMsg = `Error occurs while finding places by user ID (${userId}). Error: ${error}`;
     console.log(errMsg);
@@ -95,7 +97,7 @@ const getPlacesByUserId = async (req, res, next) => {
     return next(httpError);
   }
 
-  if (!userPlaces || userPlaces.length === 0) {
+  if (!userWithPlaces || userWithPlaces.places.length === 0) {
     // use next for asynchronous call
     return next(
       new HttpError("Could not find any place for the provided user id.", 404)
@@ -103,7 +105,7 @@ const getPlacesByUserId = async (req, res, next) => {
   }
 
   res.json({
-    userPlaces: userPlaces.map((place) => place.toObject({ getters: true })),
+    userPlaces: userWithPlaces.places.map((place) => place.toObject({ getters: true })),
   });
 };
 
