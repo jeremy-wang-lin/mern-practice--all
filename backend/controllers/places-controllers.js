@@ -228,7 +228,7 @@ const deletePlace = async (req, res, next) => {
 
   let place;
   try {
-    place = await Place.findById(placeId);
+    place = await Place.findById(placeId).populate("creator");
   } catch (error) {
     const errMsg = `Error occurs while finding place by ID (${placeId}). Error: ${error}`;
     console.log(errMsg);
@@ -247,7 +247,12 @@ const deletePlace = async (req, res, next) => {
   }
 
   try {
-    await place.remove();
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await place.remove({ session: sess });
+    place.creator.places.pull(place);  //NOTE! This operation only remove the place id in user.places. It's magic of mongoose.
+    await place.creator.save({ session: sess });
+    await sess.commitTransaction();
   } catch (error) {
     const errMsg = `Error occurs while deleting. Error: ${error}`;
     console.log(errMsg);
