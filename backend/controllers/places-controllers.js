@@ -1,8 +1,10 @@
 const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
+const mongoose = require("mongoose");
 
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
+const User = require("../models/user");
 const getCoordsForAddress = require("../util/location");
 
 let DUMMY_PLACES = [
@@ -134,8 +136,30 @@ const createPlace = async (req, res, next) => {
     creator,
   });
 
+  let user;
   try {
-    await createdPlace.save();
+    user = await User.findById(creator);
+  } catch (error) {
+    const errMsg = "Error occurs while saving place! Error: " + error;
+    console.log(errMsg);
+    const httpError = new HttpError(errMsg, 500);
+
+    return next(httpError);
+  }
+
+  if (!user) {
+    const httpError = new HttpError("Could not find user for provided id", 404)
+    return next(httpError);
+  }
+  console.log(user);
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace); //NOTE! This operation only add id of createdPlace to user.places. It's magic of mongoose.
+    await user.save({ session: sess });
+    await sess.commitTransaction();
   } catch (error) {
     const errMsg = "Error occurs while saving place! Error: " + error;
     console.log(errMsg);
