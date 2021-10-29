@@ -29,7 +29,7 @@ app.use((error, req, res, next) => {
 });
 
 const dbUrl =
-  "mongodb+srv://jeremy:czj44WxD8Sbkf5mM@cluster0.nqbnx.mongodb.net/places?retryWrites=true&w=majority";
+  "mongodb+srv://jeremy:czj44WxD8Sbkf5mM@cluster0.nqbnx.mongodb.net/mern?retryWrites=true&w=majority";
 mongoose
   .connect(dbUrl)
   .then(() => {
