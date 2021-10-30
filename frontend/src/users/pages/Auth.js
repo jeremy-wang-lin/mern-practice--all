@@ -15,7 +15,7 @@ import Button from "../../shared/components/FormElements/Button";
 const Auth = (props) => {
   const auth = useContext(AuthContext);
 
-  const [isLoginMode, setIsLoginMode] = useState(false);
+  const [isLoginMode, setIsLoginMode] = useState(true);
 
   const [formState, inputHandler, setFormData] = useForm(
     {
