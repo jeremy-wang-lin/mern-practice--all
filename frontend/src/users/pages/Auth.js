@@ -92,6 +92,9 @@ const Auth = (props) => {
         });
 
         const responseData = await response.json();
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
         console.log(responseData);
         setIsLoading(false);
         auth.login();
@@ -103,49 +106,56 @@ const Auth = (props) => {
     }
   };
 
+  const errorStateHandler = () => {
+    setError(null);
+  }
+
   return (
-    <Card className="authentication">
-      {isLoading && <LoadingSpinner asOverlay/> }
-      {isLoginMode ? <h2>Login Required</h2> : <h2>Sign Up</h2>}
-      <hr />
-      <form onSubmit={authSubmitHandler}>
-        {!isLoginMode && (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={errorStateHandler} />
+      <Card className="authentication">
+        {isLoading && <LoadingSpinner asOverlay />}
+        {isLoginMode ? <h2>Login Required</h2> : <h2>Sign Up</h2>}
+        <hr />
+        <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <Input
+              id="name"
+              element="input"
+              type="text"
+              label="Name"
+              validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(4)]}
+              errorText="Please input a valid name, at least 4 characters"
+              onInput={inputHandler}
+            />
+          )}
           <Input
-            id="name"
+            id="email"
             element="input"
-            type="text"
-            label="Name"
-            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(4)]}
-            errorText="Please input a valid name, at least 4 characters"
+            type="email"
+            label="E-Mail"
+            validators={[VALIDATOR_EMAIL()]}
+            errorText="Please input a valid email"
             onInput={inputHandler}
           />
-        )}
-        <Input
-          id="email"
-          element="input"
-          type="email"
-          label="E-Mail"
-          validators={[VALIDATOR_EMAIL()]}
-          errorText="Please input a valid email"
-          onInput={inputHandler}
-        />
-        <Input
-          id="password"
-          element="input"
-          type="password"
-          label="Password"
-          validators={[VALIDATOR_MINLENGTH(8)]}
-          errorText="Please input a valid password, at least 8 characters"
-          onInput={inputHandler}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? "LOGIN" : "SIGNUP"}
-        </Button>
-        <Button type="button" inverse onClick={switchModeHandler}>
-          SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
-        </Button>
-      </form>
-    </Card>
+          <Input
+            id="password"
+            element="input"
+            type="password"
+            label="Password"
+            validators={[VALIDATOR_MINLENGTH(8)]}
+            errorText="Please input a valid password, at least 8 characters"
+            onInput={inputHandler}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            {isLoginMode ? "LOGIN" : "SIGNUP"}
+          </Button>
+          <Button type="button" inverse onClick={switchModeHandler}>
+            SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
+          </Button>
+        </form>
+      </Card>
+    </React.Fragment>
   );
 };
 
