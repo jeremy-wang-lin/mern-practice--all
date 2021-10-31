@@ -29,7 +29,7 @@ const getAllUsers = async (req, res, next) => {
     return next(httpError);
   }
 
-  res.json({user: users.map(user => user.toObject({ getters: true }))});
+  res.json({users: users.map(user => user.toObject({ getters: true }))});
 };
 
 const signUp = async (req, res, next) => {
