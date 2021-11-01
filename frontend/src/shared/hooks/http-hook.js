@@ -20,17 +20,25 @@ export const userHttpClient = () => {
           signal: httpAbortCtrl.signal,
         });
 
+        activeHttpRequests.current = activeHttpRequests.current.filter(
+          (reqCtrl) => reqCtrl !== httpAbortCtrl
+        );
+
         if (!response.ok) {
           throw new Error(response.message);
         }
 
         const responseData = await response.json();
 
+        setIsLoading(false);
+
         return responseData;
       } catch (error) {
+        setIsLoading(false);
         setError(error.message);
+
+        throw error;
       }
-      setIsLoading(false);
     },
     []
   );
