@@ -84,6 +84,7 @@ const signUp = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
+  //await new Promise(r => setTimeout(r, 5000));
   const { email, password } = req.body;
 
   let existingUser;

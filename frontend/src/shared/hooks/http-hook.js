@@ -1,41 +1,53 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 
-export const userHttpClient = () => {
+export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const [httpError, setHttpError] = useState();
 
-  const activeHttpRequests = userRef([]);
+  const activeHttpRequests = useRef([]);
 
   const sendRequest = useCallback(
     async (url, method = "GET", body = null, headers = {}) => {
-      setIsLoading(true);
+      console.log("Enter sendRequest()");
+      setIsLoading(true); // => will trigger parent component re-rendering immediately and concurrently
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
 
       try {
+        console.log("Start fetch");
         const response = await fetch(url, {
           method,
           body,
           headers,
           signal: httpAbortCtrl.signal,
         });
+        console.log("End fetch. Response:");
+        console.log(response);
+
+        console.log("ResponseData:");
+        console.log(responseData);
 
         activeHttpRequests.current = activeHttpRequests.current.filter(
           (reqCtrl) => reqCtrl !== httpAbortCtrl
         );
 
+
         if (!response.ok) {
-          throw new Error(response.message);
+          console.log("response isn't ok. stauts: " + response.status);
+          throw new Error(responseData.message);
         }
 
-        const responseData = await response.json();
-
-        setIsLoading(false);
+        setIsLoading(false); // => will trigger parent component re-rendering immediately and concurrently
 
         return responseData;
       } catch (error) {
-        setIsLoading(false);
-        setError(error.message);
+        console.log("Catch error. Error is as follows:");
+        console.log(error);
+
+        console.log("Execute setHttpError(...)");
+        setHttpError(error.message); // => will trigger parent component re-rendering immediately and concurrently
+        console.log("Execute setIsLoading(false)");
+        setIsLoading(false); // => will trigger parent component re-rendering immediately and concurrently
 
         throw error;
       }
@@ -44,16 +56,19 @@ export const userHttpClient = () => {
   );
 
   const clearError = () => {
-    setError(null);
+    setHttpError(null);
   };
 
   useEffect(() => {
     return () => {
+      // This function will be executed when the compoent using this effect unmounts 
+      console.log("Enter useEffect() clean up!")
       activeHttpRequests.current.forEach((abortCtrl) => {
+        console.log("Execute abort()")
         abortCtrl.abort();
       });
     };
   }, []);
 
-  return { isLoading, error, sendRequest, clearError };
+  return [isLoading, httpError, sendRequest, clearError];
 };
