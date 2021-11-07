@@ -10,7 +10,7 @@ const Users = () => {
   const [loadedUsers, setLoadedUsers] = useState();
 
   useEffect(() => {
-    const getUsers = async () => {
+    const fetchUsers = async () => {
       try {
         const responseData = await sendRequest("http://localhost:5000/api/users/");
 
@@ -21,7 +21,7 @@ const Users = () => {
       }
     };
 
-    getUsers();
+    fetchUsers();
   }, [sendRequest]);
 
   return (
