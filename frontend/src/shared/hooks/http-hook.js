@@ -24,6 +24,7 @@ export const useHttpClient = () => {
         console.log("End fetch. Response:");
         console.log(response);
 
+        const responseData = await response.json();
         console.log("ResponseData:");
         console.log(responseData);
 
