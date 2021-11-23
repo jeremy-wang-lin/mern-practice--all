@@ -87,7 +87,7 @@ const Auth = (props) => {
         );
 
         console.log(responseData);
-        auth.login();
+        auth.login(responseData.user.id);
       } catch (error) {
         console.log("got error: " + error);
       }
@@ -107,7 +107,7 @@ const Auth = (props) => {
         );
 
         console.log(responseData);
-        auth.login();
+        auth.login(responseData.user.id);
       } catch (error) {
         console.log("got error: " + error);
       }
