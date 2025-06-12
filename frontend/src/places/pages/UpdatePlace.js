@@ -130,7 +130,7 @@ const UpdatePlace = () => {
         errorText="Please enter a valid description (at least 5 characters)."
         onInput={inputHandler}
         initialValue={formState.inputs.description.value}
-        initialValid={formState.inputs.title.isValid}
+        initialValid={formState.inputs.description.isValid}
       />
       <Button type="submit" disabled={!formState.isValid}>
         Update Place
